@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/small_margin"
+    tools:context=".presentation.details.DetailsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            android:id="@+id/progress_pb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="gone"
+            android:indeterminateDrawable="@drawable/progress_bar_animation"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/picture_iv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:textColor="@color/design_default_color_primary_dark"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAlignment="textStart"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/picture_iv" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/company_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:textColor="@color/design_default_color_primary"
+            android:textAlignment="textStart"
+            android:text="@string/company"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/user_name" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:textColor="@color/design_default_color_primary"
+            android:textAlignment="textStart"
+            android:text="@string/location"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/company_name" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:textColor="@color/design_default_color_primary"
+            android:textAlignment="textStart"
+            android:text="@string/email"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/location" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/hireable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:textColor="@color/design_default_color_primary"
+            android:textAlignment="textStart"
+            android:text="@string/hireable"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/email" />
+
+        <ImageView
+            android:id="@+id/hireable_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/checkable_image"
+            android:textColor="@color/design_default_color_primary"
+            android:layout_marginStart="@dimen/small_margin"
+            app:layout_constraintBottom_toBottomOf="@id/hireable"
+            app:layout_constraintStart_toEndOf="@id/hireable"
+            app:layout_constraintTop_toTopOf="@id/hireable" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/twitter_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:textColor="@color/design_default_color_primary"
+            android:textAlignment="textStart"
+            android:text="@string/twitter_username"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/hireable" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/public_repos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:textColor="@color/design_default_color_primary"
+            android:textAlignment="textStart"
+            android:text="@string/public_repos"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/twitter_username" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/public_gists"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:textColor="@color/design_default_color_primary"
+            android:textAlignment="textStart"
+            android:text="@string/public_gists"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/public_repos" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/followers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:textColor="@color/design_default_color_primary"
+            android:textAlignment="textStart"
+            android:text="@string/followers"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/public_gists" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/following"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:textColor="@color/design_default_color_primary"
+            android:textAlignment="textStart"
+            android:text="@string/following"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/followers" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/created"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:textColor="@color/design_default_color_primary"
+            android:textAlignment="textStart"
+            android:text="@string/created"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/following" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/updated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/design_default_color_primary"
+            android:layout_marginTop="@dimen/small_margin"
+            android:textAlignment="textStart"
+            android:text="@string/updated"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/created" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/bio_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text = "@string/bio_title"
+            android:textColor="@color/design_default_color_primary"
+            android:textStyle="bold"
+            android:visibility="invisible"
+            android:layout_marginTop="@dimen/small_margin"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@id/updated" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/bio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:layout_marginTop="@dimen/small_margin"
+            android:textColor="@color/design_default_color_primary"
+            android:textAlignment="center"
+            android:textSize="12sp"
+            app:layout_constraintTop_toBottomOf="@id/bio_title" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/small_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/bio" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

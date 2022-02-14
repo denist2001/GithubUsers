@@ -1,0 +1,12 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.denis.github_users">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application>
+        <activity
+            android:name=".HiltTestActivity"
+            android:exported="true">
+        </activity>
+    </application>
+
+</manifest>

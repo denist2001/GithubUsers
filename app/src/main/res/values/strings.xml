@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">GitHub users</string>
+    <string name="login">Login: <b>%1$s</b></string>
+    <string name="id_number">ID: <b>%1$d</b></string>
+    <string name="wrong_user_name">Wrong user name</string>
+    <string name="result_of_parsing">Result can not be parsed</string>
+    <string name="result_of_io">IO error</string>
+    <string name="network_error">Network error</string>
+    <string name="no_more_elements">No more elements</string>
+    <string name="unknown_issue">Unknown issue</string>
+    <string name="company">Company: %1$s</string>
+    <string name="location">Location: %1$s</string>
+    <string name="email">E-mail: %1$s</string>
+    <string name="hireable">Hireable: </string>
+    <string name="twitter_username">Twitter username: %1$s</string>
+    <string name="public_repos">Public repos: %1$d</string>
+    <string name="public_gists">Public gists: %1$d</string>
+    <string name="followers">Followers: %1$d</string>
+    <string name="following">Following: %1$d</string>
+    <string name="created">Created at: %1$s</string>
+    <string name="updated">Updated at: %1$s</string>
+    <string name="unknown">unknown</string>
+    <string name="bio_title">Biography</string>
+</resources>
