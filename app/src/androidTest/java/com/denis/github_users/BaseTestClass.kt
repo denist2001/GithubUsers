@@ -75,7 +75,7 @@ abstract class BaseTestClass {
     @Throws(IOException::class)
     fun closeDb() {
         device.setOrientationNatural()
-        db.close()
-        mockServer.shutdown()
+        if (::db.isInitialized) db.close()
+        if (::mockServer.isInitialized) mockServer.shutdown()
     }
 }

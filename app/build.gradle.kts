@@ -1,34 +1,22 @@
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    kotlin("kapt")
-    id("dagger.hilt.android.plugin")
-    id("androidx.navigation.safeargs.kotlin")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.navigation.safeargs)
 }
+
 android {
-    compileSdk = 31
+    namespace = "com.denis.github_users"
+    compileSdk = 37
 
     defaultConfig {
-        minSdk = Config.minSdk
-        targetSdk = Config.targetSdk
-        versionCode = Config.versionCode
-        versionName = Config.versionName
+        applicationId = "com.denis.github_users"
+        minSdk = 24
+        targetSdk = 36
+        versionCode = 1
+        versionName = "1.0"
 
-        testInstrumentationRunner =
-            "com.denis.github_users.MainTestRunner"
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments["room.schemaLocation"] = "$projectDir/schemas"
-                arguments["room.incremental"] = "true"
-                arguments["room.expandProjection"] = "true"
-            }
-        }
-    }
-    // this solves Espresso issue https://stackoverflow.com/questions/67358179/android-espresso-test-error-no-static-method-loadsingleserviceornull
-    configurations.all {
-        resolutionStrategy {
-            force("androidx.test:monitor:1.4.0")
-        }
+        testInstrumentationRunner = "com.denis.github_users.MainTestRunner"
     }
 
     buildTypes {
@@ -45,76 +33,72 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
+    buildFeatures {
+        viewBinding = true
+        buildConfig = false
     }
-    viewBinding {
-        isEnabled = true
+    packaging {
+        resources.excludes += setOf("META-INF/LICENSE.md", "META-INF/LICENSE-notice.md")
+        // Required by mockk-android so its JVMTI agent can be extracted on device
+        jniLibs.useLegacyPackaging = true
     }
 }
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.incremental", "true")
+    arg("room.generateKotlin", "true")
+}
+
 dependencies {
-    Deps.apply {
-        // core section
-        implementation(core_ktx)
-        implementation(appcompat)
-        implementation(fragment_ktx)
-        // presentation section
-        implementation(material)
-        implementation(constraintlayout)
-        // lifecycle section
-        implementation(lifecycle_livedata_ktx)
-        implementation(lifecycle_viewmodel_ktx)
-        // navigation component
-        implementation(navigation_fragment_ktx)
-        implementation(navigation_ui_ktx)
-        // dependency injection section
-        implementation(hilt_android)
-        implementation(hilt_lifecycle_viewmodel)
-        kapt(hilt_android_compiler)
-        kapt(hilt_compiler)
-        // network section
-        implementation(retrofit)
-        implementation(converter_gson)
-        // paging section
-        implementation(paging_runtime_ktx)
-        // image downloading and presenting
-        implementation(coil_kt)
-        // database section
-        implementation(room_ktx)
-        implementation(room_runtime)
-        implementation(room_paging)
-        kapt(room_compiler)
-    }
-    // unit test section
-    TestDeps.apply {
-        testImplementation(junit)
-        testImplementation(mockk)
-        testImplementation(coroutine_test)
-        testImplementation(turbine)
-        // instrumentation test section
-        androidTestImplementation(androidx_junit)
-        androidTestImplementation(espresso_core)
-        androidTestImplementation(espresso_web)
-        androidTestImplementation(espresso_intents)
-        androidTestImplementation(espresso_contrib)
-        androidTestImplementation(hilt_android_testing)
-        androidTestImplementation(mockk_android)
-        androidTestImplementation(mockwebserver)
-        androidTestImplementation(uiautomator)
-        androidTestImplementation(androidx_test_rules)
-        androidTestImplementation(androidx_test_runner)
-        androidTestImplementation(awaitility)
-        debugImplementation(androidx_fragment)
-        debugImplementation(androidx_fragment_testing)
-        androidTestImplementation(navigation_testing)
-        androidTestImplementation(room_testing)
-        androidTestImplementation(Deps.fragment_ktx)
-        kaptAndroidTest(Deps.hilt_android_compiler)
-        androidTestAnnotationProcessor(Deps.hilt_android_compiler)
-        androidTestImplementation(coroutine_test)
-    }
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.material)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.androidx.paging.runtime.ktx)
+    implementation(libs.coil)
+    implementation(libs.coil.network.okhttp)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.paging)
+    ksp(libs.androidx.room.compiler)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
+
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.test.espresso.contrib)
+    androidTestImplementation(libs.androidx.test.espresso.intents)
+    androidTestImplementation(libs.androidx.test.espresso.web)
+    androidTestImplementation(libs.androidx.test.uiautomator)
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.okhttp.mockwebserver)
+    androidTestImplementation(libs.awaitility.kotlin)
+    androidTestImplementation(libs.androidx.navigation.testing)
+    androidTestImplementation(libs.androidx.room.testing)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    debugImplementation(libs.androidx.fragment.testing)
+    // fragment-testing drags in old androidx.test versions which then clash with the test APK
+    debugImplementation(libs.androidx.test.core)
 }

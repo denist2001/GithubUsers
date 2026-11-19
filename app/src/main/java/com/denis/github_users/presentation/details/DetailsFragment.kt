@@ -7,9 +7,12 @@ import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import coil.load
-import coil.size.Scale
-import coil.transform.RoundedCornersTransformation
+import coil3.load
+import coil3.request.fallback
+import coil3.request.placeholder
+import coil3.request.transformations
+import coil3.size.Scale
+import coil3.transform.RoundedCornersTransformation
 import com.denis.github_users.R
 import com.denis.github_users.databinding.DetailsFragmentBinding
 import com.denis.github_users.presentation.details.model.PresentationDetails

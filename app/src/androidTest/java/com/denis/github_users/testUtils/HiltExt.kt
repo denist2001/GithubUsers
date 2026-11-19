@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.espresso.web.internal.deps.guava.base.Preconditions
 import com.denis.github_users.HiltTestActivity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -29,7 +28,7 @@ inline fun <reified T : Fragment> launchFragmentInHiltContainer(
             activity.supportFragmentManager.fragmentFactory = it
         }
         val fragment = activity.supportFragmentManager.fragmentFactory.instantiate(
-            Preconditions.checkNotNull(T::class.java.classLoader),
+            checkNotNull(T::class.java.classLoader),
             T::class.java.name
         )
         fragment.arguments = fragmentArgs

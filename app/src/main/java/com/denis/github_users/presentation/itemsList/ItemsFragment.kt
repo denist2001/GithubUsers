@@ -5,6 +5,8 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -82,9 +84,11 @@ class ItemsFragment : Fragment(R.layout.items_fragment) {
     }
 
     private fun startObserving() {
-        lifecycleScope.launchWhenCreated {
-            viewModel.itemsFlow.collectLatest { presentationEntity ->
-                itemsListAdapter.submitData(presentationEntity)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.itemsFlow.collectLatest { presentationEntity ->
+                    itemsListAdapter.submitData(presentationEntity)
+                }
             }
         }
     }

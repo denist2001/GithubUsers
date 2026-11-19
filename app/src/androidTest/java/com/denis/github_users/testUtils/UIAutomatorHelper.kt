@@ -1,6 +1,6 @@
 package com.denis.github_users.testUtils
 
-import androidx.test.InstrumentationRegistry
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiSelector
@@ -11,7 +11,7 @@ fun UiDevice.checkViewByText(expectedText: String, timeoutInMs: Long = 1000): Bo
 }
 
 fun getUiObject(viewId: Int): UiObject {
-    val resourceId = InstrumentationRegistry.getTargetContext().resources.getResourceName(viewId)
+    val resourceId = ApplicationProvider.getApplicationContext<android.content.Context>().resources.getResourceName(viewId)
     val selector = UiSelector().resourceId(resourceId)
     return UiDevice.getInstance(androidx.test.platform.app.InstrumentationRegistry.getInstrumentation())
         .findObject(selector)

@@ -67,16 +67,16 @@ class UsersListTest : BaseTestClass() {
     @Test
     fun progressBar_shouldAppearDuringStartAndDisappearWhenListDownloaded() = runBlocking {
         waitUntilProgressBarAppears(R.id.progress_pb, 1000)
-        assertEquals(10, userDataDao.getUserDataEntities(100).size)
         waitUntilViewWithId(R.id.items_list_rv, 15, isDisplayed())
+        assertEquals(10, userDataDao.getUserDataEntities(100).size)
         waitUntilProgressBarDisappears(R.id.progress_pb, 1000)
     }
 
     @Test
     fun showUsers_shouldAppearInOrderOfIds() = runBlocking {
         waitUntilProgressBarAppears(R.id.progress_pb, 1000)
-        assertEquals(10, userDataDao.getUserDataEntities(100).size)
         waitUntilViewWithId(R.id.items_list_rv, 15, isDisplayed())
+        assertEquals(10, userDataDao.getUserDataEntities(100).size)
         waitUntilProgressBarDisappears(R.id.progress_pb, 1000)
         val ids = listOf(1, 2, 3, 4, 5, 6, 7, 17, 18, 19)
         ids.forEachIndexed { index, id ->
@@ -88,8 +88,8 @@ class UsersListTest : BaseTestClass() {
     fun showUsers_whenScreenRotates_shouldNotDoRequest() = runBlocking {
         assertNotNull(mockServer.takeRequest())
         waitUntilProgressBarAppears(R.id.progress_pb, 1000)
-        assertEquals(10, userDataDao.getUserDataEntities(100).size)
         waitUntilViewWithId(R.id.items_list_rv, 15, isDisplayed())
+        assertEquals(10, userDataDao.getUserDataEntities(100).size)
         device.unfreezeRotation()
         device.setOrientationLeft()
         assertNull(mockServer.takeRequest(1, TimeUnit.SECONDS))
