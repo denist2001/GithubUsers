@@ -1,18 +1,28 @@
 package com.denis.github_users.presentation
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.denis.github_users.databinding.MainActivityBinding
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.Modifier
+import com.denis.github_users.presentation.theme.GithubUsersTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
-
-    private lateinit var binding: MainActivityBinding
+class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        binding = MainActivityBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContent {
+            GithubUsersTheme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { padding ->
+                    AppNavHost(modifier = Modifier.padding(padding))
+                }
+            }
+        }
     }
 }

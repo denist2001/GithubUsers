@@ -1,6 +1,6 @@
 package com.denis.github_users
 
-import androidx.test.espresso.intent.rule.IntentsTestRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
@@ -38,7 +38,7 @@ abstract class BaseTestClass {
     val hiltRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
-    var intentsTestRule = IntentsTestRule(HiltTestActivity::class.java)
+    val composeRule = createAndroidComposeRule<HiltTestActivity>()
 
     @get:Rule(order = 2)
     var grantPermissionRule = GrantPermissionRule.grant(
@@ -53,7 +53,7 @@ abstract class BaseTestClass {
         setMockResponses()
         userDataDao = db.userDataDao()
         userDataDao.clearAll()
-        launchFragment()
+        if (launchOnSetUp) launchScreen()
     }
 
     fun setNetworkDispatcher(fileName: String, responseCode: Int) {
@@ -69,7 +69,10 @@ abstract class BaseTestClass {
 
     abstract fun setMockResponses()
 
-    abstract fun launchFragment()
+    /** Set to false when a test configures the mock server before launching the screen. */
+    open val launchOnSetUp: Boolean = true
+
+    abstract fun launchScreen()
 
     @After
     @Throws(IOException::class)

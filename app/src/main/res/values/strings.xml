@@ -21,4 +21,5 @@
     <string name="updated">Updated at: %1$s</string>
     <string name="unknown">unknown</string>
     <string name="bio_title">Biography</string>
+    <string name="list_is_empty">List is empty.</string>
 </resources>

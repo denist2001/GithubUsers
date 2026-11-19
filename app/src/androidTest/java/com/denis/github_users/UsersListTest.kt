@@ -1,16 +1,7 @@
 package com.denis.github_users
 
 import android.content.Context
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
-import androidx.navigation.testing.TestNavHostController
 import androidx.room.Room
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.*
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.contrib.RecyclerViewActions
-import androidx.test.espresso.contrib.RecyclerViewActions.scrollToPosition
-import androidx.test.espresso.matcher.ViewMatchers.*
 import com.denis.github_users.data.RepositoryService
 import com.denis.github_users.data.db.UsersDB
 import com.denis.github_users.data.repository.RepositoryImpl
@@ -18,12 +9,7 @@ import com.denis.github_users.di.CoroutinesModule
 import com.denis.github_users.di.DBModule
 import com.denis.github_users.di.NetworkModule
 import com.denis.github_users.domain.Repository
-import com.denis.github_users.presentation.itemsList.ItemsFragment
-import com.denis.github_users.presentation.itemsList.innerItem.ItemViewHolder
-import com.denis.github_users.testUtils.launchFragmentInHiltContainer
-import com.denis.github_users.testUtils.waitUntilProgressBarAppears
-import com.denis.github_users.testUtils.waitUntilProgressBarDisappears
-import com.denis.github_users.testUtils.waitUntilViewWithId
+import com.denis.github_users.presentation.theme.GithubUsersTheme
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -35,60 +21,73 @@ import dagger.hilt.android.testing.UninstallModules
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import org.junit.Assert.*
 import org.junit.Test
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.doubleClick
+import androidx.compose.ui.test.longClick
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToIndex
+import androidx.compose.ui.test.performTouchInput
+import com.denis.github_users.presentation.itemsList.ITEMS_LIST_TAG
+import com.denis.github_users.presentation.itemsList.ItemsScreen
+import com.denis.github_users.presentation.itemsList.PROGRESS_TAG
+import com.denis.github_users.testUtils.waitUntilTagDisappears
+import com.denis.github_users.testUtils.waitUntilTagExists
+import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import java.util.Collections
+import java.util.concurrent.TimeUnit
 
 @ExperimentalCoroutinesApi
 @UninstallModules(NetworkModule::class, CoroutinesModule::class, DBModule::class)
 @HiltAndroidTest
 class UsersListTest : BaseTestClass() {
 
-    private lateinit var navController: NavController
+    private val clickedLogins: MutableList<String> = Collections.synchronizedList(mutableListOf())
+
     override fun setMockResponses() {
         setNetworkDispatcher("10users.json", 200)
     }
 
-    override fun launchFragment() {
-        launchFragmentInHiltContainer<ItemsFragment> {
-            //preparation for starting fragment
-            navController = TestNavHostController(requireActivity())
-            navController.setGraph(R.navigation.nav_graph)
-            Navigation.setViewNavController(requireView(), navController)
+    override fun launchScreen() {
+        composeRule.setContent {
+            GithubUsersTheme {
+                ItemsScreen(onUserClick = { clickedLogins += it })
+            }
         }
     }
 
     @Test
     fun progressBar_shouldAppearDuringStartAndDisappearWhenListDownloaded() = runBlocking {
-        waitUntilProgressBarAppears(R.id.progress_pb, 1000)
-        waitUntilViewWithId(R.id.items_list_rv, 15, isDisplayed())
+        waitUntilListLoaded()
         assertEquals(10, userDataDao.getUserDataEntities(100).size)
-        waitUntilProgressBarDisappears(R.id.progress_pb, 1000)
+        composeRule.onNodeWithTag(PROGRESS_TAG).assertDoesNotExist()
     }
 
     @Test
     fun showUsers_shouldAppearInOrderOfIds() = runBlocking {
-        waitUntilProgressBarAppears(R.id.progress_pb, 1000)
-        waitUntilViewWithId(R.id.items_list_rv, 15, isDisplayed())
+        waitUntilListLoaded()
         assertEquals(10, userDataDao.getUserDataEntities(100).size)
-        waitUntilProgressBarDisappears(R.id.progress_pb, 1000)
         val ids = listOf(1, 2, 3, 4, 5, 6, 7, 17, 18, 19)
         ids.forEachIndexed { index, id ->
-            checkRecyclerItemAndScrollToPos(index, id)
+            composeRule.onNodeWithTag(ITEMS_LIST_TAG).performScrollToIndex(index)
+            composeRule.onNodeWithText("ID: $id").assertIsDisplayed()
         }
     }
 
     @Test
     fun showUsers_whenScreenRotates_shouldNotDoRequest() = runBlocking {
         assertNotNull(mockServer.takeRequest())
-        waitUntilProgressBarAppears(R.id.progress_pb, 1000)
-        waitUntilViewWithId(R.id.items_list_rv, 15, isDisplayed())
+        waitUntilListLoaded()
         assertEquals(10, userDataDao.getUserDataEntities(100).size)
         device.unfreezeRotation()
         device.setOrientationLeft()
@@ -96,96 +95,42 @@ class UsersListTest : BaseTestClass() {
     }
 
     @Test
-    fun clickOnUser_shouldGoToDetailsFragment() = runBlocking {
-        waitUntilViewWithId(R.id.items_list_rv, 15, isDisplayed())
-        waitUntilProgressBarDisappears(R.id.progress_pb, 1000)
-        onView(withId(R.id.items_list_rv)).perform(
-            RecyclerViewActions.actionOnItemAtPosition<ItemViewHolder>(
-                0,
-                click()
-            )
-        )
-        navController.addOnDestinationChangedListener { controller, destination, bundle ->
-            when (destination.id) {
-                R.id.detailsFragment -> assertEquals("mojombo", bundle?.getString("login"))
-                else -> assertNull(bundle?.getString("login"))
-            }
-        }
+    fun clickOnUser_shouldGoToDetails() {
+        waitUntilListLoaded()
+        composeRule.onNodeWithTag("item_0").performClick()
+        composeRule.waitForIdle()
+        assertEquals(listOf("mojombo"), clickedLogins)
     }
 
     @Test
-    fun doubleClickOnUser_shouldGoToDetailsFragment() = runBlocking {
-        waitUntilViewWithId(R.id.items_list_rv, 15, isDisplayed())
-        waitUntilProgressBarDisappears(R.id.progress_pb, 1000)
-        onView(withId(R.id.items_list_rv)).perform(
-            RecyclerViewActions.actionOnItemAtPosition<ItemViewHolder>(
-                0,
-                doubleClick()
-            )
-        )
-        navController.addOnDestinationChangedListener { controller, destination, bundle ->
-            when (destination.id) {
-                R.id.detailsFragment -> assertEquals("mojombo", bundle?.getString("login"))
-                else -> assertNull(bundle?.getString("login"))
-            }
-        }
+    fun doubleClickOnUser_shouldGoToDetailsOnlyOnce() {
+        waitUntilListLoaded()
+        composeRule.onNodeWithTag("item_0").performTouchInput { doubleClick() }
+        composeRule.waitForIdle()
+        assertEquals(listOf("mojombo"), clickedLogins)
     }
 
     @Test
-    fun longClickOnUser_shouldGoToDetailsFragment() = runBlocking {
-        waitUntilViewWithId(R.id.items_list_rv, 15, isDisplayed())
-        waitUntilProgressBarDisappears(R.id.progress_pb, 1000)
-        onView(withId(R.id.items_list_rv)).perform(
-            RecyclerViewActions.actionOnItemAtPosition<ItemViewHolder>(
-                0,
-                longClick()
-            )
-        )
-        navController.addOnDestinationChangedListener { controller, destination, bundle ->
-            when (destination.id) {
-                R.id.detailsFragment -> assertEquals("mojombo", bundle?.getString("login"))
-                else -> assertNull(bundle?.getString("login"))
-            }
-        }
+    fun longClickOnUser_shouldGoToDetails() {
+        waitUntilListLoaded()
+        composeRule.onNodeWithTag("item_0").performTouchInput { longClick() }
+        composeRule.waitForIdle()
+        assertEquals(listOf("mojombo"), clickedLogins)
     }
 
     @Test
-    fun clickOnDifferentUsers_shouldGoToDetailsFragment() = runBlocking {
-        waitUntilViewWithId(R.id.items_list_rv, 15, isDisplayed())
-        waitUntilProgressBarDisappears(R.id.progress_pb, 1000)
-        launch {
-            onView(withId(R.id.items_list_rv)).perform(
-                RecyclerViewActions.actionOnItemAtPosition<ItemViewHolder>(
-                    0,
-                    click()
-                )
-            )
-        }
-        launch {
-            onView(withId(R.id.items_list_rv)).perform(
-                RecyclerViewActions.actionOnItemAtPosition<ItemViewHolder>(
-                    1,
-                    click()
-                )
-            )
-        }
-        navController.addOnDestinationChangedListener { controller, destination, bundle ->
-            when (destination.id) {
-                R.id.detailsFragment -> assertNotNull(bundle?.getString("login"))
-                else -> assertNull(bundle?.getString("login"))
-            }
-        }
+    fun clickOnDifferentUsers_shouldGoToDetailsOnlyOnce() {
+        waitUntilListLoaded()
+        composeRule.onNodeWithTag("item_0").performClick()
+        composeRule.onNodeWithTag("item_1").performClick()
+        composeRule.waitForIdle()
+        assertEquals(1, clickedLogins.size)
+        assertTrue(clickedLogins.first().isNotEmpty())
     }
 
-    private fun checkRecyclerItemAndScrollToPos(index: Int, id: Int) {
-        onView(
-            withId(
-                R.id.items_list_rv
-            )
-        ).check(matches(isDisplayed()))
-        onView(withId(R.id.items_list_rv))
-            .perform(scrollToPosition<ItemViewHolder>(index))
-        onView(withText("ID: $id")).check(matches(isDisplayed()))
+    private fun waitUntilListLoaded() {
+        composeRule.waitUntilTagExists("item_0")
+        composeRule.waitUntilTagDisappears(PROGRESS_TAG)
     }
 
     @Module
