@@ -29,11 +29,11 @@ class UsersRemoteMediator @Inject constructor(
                 LoadType.REFRESH -> 1
                 LoadType.PREPEND ->
                     return MediatorResult.Success(endOfPaginationReached = true)
-                LoadType.APPEND -> {
-                    val lastItem = state.lastItemOrNull()
-                        ?: return MediatorResult.Success(endOfPaginationReached = true)
-                    lastItem.id
-                }
+                // The PagingState can still be empty right after REFRESH (Room hasn't emitted the
+                // new page yet), so the DB is the source of truth for where to continue.
+                LoadType.APPEND -> state.lastItemOrNull()?.id
+                    ?: userDataDao.getMaxId()
+                    ?: return MediatorResult.Success(endOfPaginationReached = false)
             }
             val repositoryData =
                 // TODO: probably, it's better to define network codes to show more precise errors to the user

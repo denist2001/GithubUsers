@@ -12,6 +12,9 @@ abstract class UserDataDao {
     @Query("SELECT * FROM user_data ORDER BY id LIMIT :size")
     abstract suspend fun getUserDataEntities(size: Int): List<UserDataEntity>
 
+    @Query("SELECT MAX(id) FROM user_data")
+    abstract suspend fun getMaxId(): Int?
+
     @Query("DELETE FROM user_data")
     abstract suspend fun clearAll()
 

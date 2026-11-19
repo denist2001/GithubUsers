@@ -8,6 +8,7 @@
     <string name="network_error">Network error</string>
     <string name="no_more_elements">No more elements</string>
     <string name="unknown_issue">Unknown issue</string>
+    <string name="retry">Retry</string>
     <string name="company">Company: %1$s</string>
     <string name="location">Location: %1$s</string>
     <string name="email">E-mail: %1$s</string>

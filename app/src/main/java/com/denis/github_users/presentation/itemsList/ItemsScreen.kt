@@ -31,9 +31,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -72,6 +74,8 @@ import kotlinx.coroutines.delay
 const val ITEMS_LIST_TAG = "items_list"
 const val PROGRESS_TAG = "progress"
 const val ERROR_TAG = "error"
+const val APPEND_LOADING_TAG = "append_loading"
+const val APPEND_ERROR_TAG = "append_error"
 private const val CLICK_THROTTLE_MILLIS = 1000L
 private const val STAGGERED_ITEMS = 8
 private const val STAGGER_DELAY_MILLIS = 70L
@@ -129,6 +133,18 @@ fun ItemsScreen(
                     )
                 }
             }
+            if (items.itemCount > 0) {
+                when (val append = items.loadState.append) {
+                    is LoadState.Loading -> item(key = "append_loading") { AppendLoading() }
+                    is LoadState.Error -> item(key = "append_error") {
+                        AppendError(
+                            message = append.error.message ?: stringResource(R.string.unknown_issue),
+                            onRetry = { items.retry() },
+                        )
+                    }
+                    is LoadState.NotLoading -> Unit
+                }
+            }
         }
         when {
             refreshState is LoadState.Loading && items.itemCount == 0 -> SkeletonList()
@@ -142,6 +158,37 @@ fun ItemsScreen(
                 text = stringResource(R.string.list_is_empty),
                 modifier = Modifier.align(Alignment.Center),
             )
+        }
+    }
+}
+
+@Composable
+private fun AppendLoading() {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .testTag(APPEND_LOADING_TAG),
+    ) {
+        CircularProgressIndicator(color = Color.White, strokeWidth = 3.dp, modifier = Modifier.size(32.dp))
+    }
+}
+
+@Composable
+private fun AppendError(message: String, onRetry: () -> Unit) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .glass(CardShape)
+            .padding(horizontal = 20.dp, vertical = 12.dp)
+            .testTag(APPEND_ERROR_TAG),
+    ) {
+        Text(text = message, color = Color.White, modifier = Modifier.weight(1f))
+        TextButton(onClick = onRetry) {
+            Text(text = stringResource(R.string.retry), color = Color(0xFF03DAC5))
         }
     }
 }
