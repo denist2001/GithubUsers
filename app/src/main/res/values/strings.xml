@@ -13,13 +13,13 @@
     <string name="email">E-mail: %1$s</string>
     <string name="hireable">Hireable: </string>
     <string name="twitter_username">Twitter username: %1$s</string>
-    <string name="public_repos">Public repos: %1$d</string>
-    <string name="public_gists">Public gists: %1$d</string>
-    <string name="followers">Followers: %1$d</string>
-    <string name="following">Following: %1$d</string>
     <string name="created">Created at: %1$s</string>
     <string name="updated">Updated at: %1$s</string>
     <string name="unknown">unknown</string>
     <string name="bio_title">Biography</string>
+    <string name="stat_repos">Repos</string>
+    <string name="stat_gists">Gists</string>
+    <string name="stat_followers">Followers</string>
+    <string name="stat_following">Following</string>
     <string name="list_is_empty">List is empty.</string>
 </resources>
